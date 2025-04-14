@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
-import Navbar from '@/components/layout/navbar';
-import Footer from '@/components/layout/footer';
 import { Wave } from '@/components/ui/wave';
 import { ClockIcon } from '@/components/ui/clock-icon';
 import { SkillProgress } from '@/components/ui/skill-progress';
@@ -150,8 +148,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Navbar />
-      
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-primary to-purple-500 text-white min-h-[500px] flex items-center">
         <div className="absolute right-0 top-0 h-full w-1/3 opacity-20"
@@ -713,8 +709,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      
-      <Footer />
     </>
   );
 }

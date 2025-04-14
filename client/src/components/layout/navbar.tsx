@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
+import { AuthContext } from '@/hooks/use-auth';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +18,15 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
-  const { user, logoutMutation } = useAuth();
-
+  
+  // Using direct context to avoid the error if context is not available
+  const authContext = useContext(AuthContext);
+  const user = authContext?.user || null;
+  
   const handleLogout = () => {
-    logoutMutation.mutate();
+    if (authContext?.logoutMutation) {
+      authContext.logoutMutation.mutate();
+    }
   };
 
   const toggleMobileMenu = () => {

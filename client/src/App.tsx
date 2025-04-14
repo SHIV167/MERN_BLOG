@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
@@ -15,16 +15,56 @@ import AdminSkills from "@/pages/admin/skills";
 import AdminContacts from "@/pages/admin/contacts";
 import AdminVideos from "@/pages/admin/videos";
 import AdminEditor from "@/pages/admin/editor";
+import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
+
+// Layout component for public pages
+function PublicLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
+}
 
 function Router() {
+  const [location] = useLocation();
+  const isAdminRoute = location.startsWith('/admin');
+
   return (
     <Switch>
       {/* Public routes */}
-      <Route path="/" component={HomePage} />
+      <Route path="/">
+        {() => (
+          <PublicLayout>
+            <HomePage />
+          </PublicLayout>
+        )}
+      </Route>
       <Route path="/auth" component={AuthPage} />
-      <Route path="/blog" component={BlogIndex} />
-      <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/projects" component={Projects} />
+      <Route path="/blog">
+        {() => (
+          <PublicLayout>
+            <BlogIndex />
+          </PublicLayout>
+        )}
+      </Route>
+      <Route path="/blog/:slug">
+        {(params) => (
+          <PublicLayout>
+            <BlogPost />
+          </PublicLayout>
+        )}
+      </Route>
+      <Route path="/projects">
+        {() => (
+          <PublicLayout>
+            <Projects />
+          </PublicLayout>
+        )}
+      </Route>
       
       {/* Admin routes - protected */}
       <ProtectedRoute path="/admin" component={AdminDashboard} />
@@ -39,7 +79,13 @@ function Router() {
       <ProtectedRoute path="/admin/videos" component={AdminVideos} />
       
       {/* Fallback to 404 */}
-      <Route component={NotFound} />
+      <Route>
+        {() => (
+          <PublicLayout>
+            <NotFound />
+          </PublicLayout>
+        )}
+      </Route>
     </Switch>
   );
 }
