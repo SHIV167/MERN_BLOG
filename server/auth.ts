@@ -5,12 +5,14 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User, insertUserSchema } from "@shared/schema";
+import { User, insertUserSchema, IUser } from "@shared/schema";
 import { ZodError } from "zod";
+import { Document } from "mongoose";
 
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Use IUser interface to avoid circular reference
+    interface User extends IUser, Document {}
   }
 }
 
