@@ -47,13 +47,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/blog" component={BlogIndex} />
       <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/projects">
-        {() => (
-          <PublicLayout>
-            <Projects />
-          </PublicLayout>
-        )}
-      </Route>
+      <Route path="/projects" component={Projects} />
       
       {/* Admin routes - protected */}
       <ProtectedRoute path="/admin" component={AdminDashboard} />
