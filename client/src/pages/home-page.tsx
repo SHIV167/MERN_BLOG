@@ -698,7 +698,7 @@ export default function HomePage() {
                   <div>
                     <label htmlFor="subject" className="block text-gray-700 text-sm font-medium mb-2">Subject</label>
                     <input
-                      {......form.register('subject')}
+                      {...form.register('subject')}
                       type="text"
                       id="subject"
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
