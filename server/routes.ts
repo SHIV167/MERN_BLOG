@@ -70,19 +70,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         : await storage.getAllProjects();
       res.json(projects);
     } catch (error) {
+      console.error("Error fetching projects:", error);
       res.status(500).json({ message: "Failed to fetch projects" });
     }
   });
 
   app.get("/api/projects/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const project = await storage.getProject(id);
       if (!project) {
         return res.status(404).json({ message: "Project not found" });
       }
       res.json(project);
     } catch (error) {
+      console.error("Error fetching project:", error);
       res.status(500).json({ message: "Failed to fetch project" });
     }
   });
@@ -105,7 +107,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         technologies,
         imageUrl: `/uploads/${file.filename}`,
-        authorId: req.user.id,
+        authorId: req.user._id,
         featured: req.body.featured === "true",
       };
       
@@ -114,6 +116,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const project = await storage.createProject(validatedData);
       res.status(201).json(project);
     } catch (error) {
+      console.error("Error creating project:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -125,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const existingProject = await storage.getProject(id);
       
       if (!existingProject) {
@@ -154,6 +157,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedProject = await storage.updateProject(id, projectData);
       res.json(updatedProject);
     } catch (error) {
+      console.error("Error updating project:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -165,7 +169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const deleted = await storage.deleteProject(id);
       
       if (!deleted) {
@@ -174,6 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json({ message: "Project deleted successfully" });
     } catch (error) {
+      console.error("Error deleting project:", error);
       res.status(500).json({ message: "Failed to delete project" });
     }
   });
@@ -187,6 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         : await storage.getAllSkills();
       res.json(skills);
     } catch (error) {
+      console.error("Error fetching skills:", error);
       res.status(500).json({ message: "Failed to fetch skills" });
     }
   });
@@ -199,6 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const skill = await storage.createSkill(validatedData);
       res.status(201).json(skill);
     } catch (error) {
+      console.error("Error creating skill:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -210,7 +217,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const updatedSkill = await storage.updateSkill(id, req.body);
       
       if (!updatedSkill) {
@@ -219,6 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updatedSkill);
     } catch (error) {
+      console.error("Error updating skill:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -230,7 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const deleted = await storage.deleteSkill(id);
       
       if (!deleted) {
@@ -239,6 +247,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json({ message: "Skill deleted successfully" });
     } catch (error) {
+      console.error("Error deleting skill:", error);
       res.status(500).json({ message: "Failed to delete skill" });
     }
   });
@@ -249,6 +258,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const categories = await storage.getAllCategories();
       res.json(categories);
     } catch (error) {
+      console.error("Error fetching categories:", error);
       res.status(500).json({ message: "Failed to fetch categories" });
     }
   });
@@ -261,6 +271,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const category = await storage.createCategory(validatedData);
       res.status(201).json(category);
     } catch (error) {
+      console.error("Error creating category:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -272,7 +283,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const updatedCategory = await storage.updateCategory(id, req.body);
       
       if (!updatedCategory) {
@@ -281,6 +292,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updatedCategory);
     } catch (error) {
+      console.error("Error updating category:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -292,7 +304,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const deleted = await storage.deleteCategory(id);
       
       if (!deleted) {
@@ -301,6 +313,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json({ message: "Category deleted successfully" });
     } catch (error) {
+      console.error("Error deleting category:", error);
       res.status(500).json({ message: "Failed to delete category" });
     }
   });
@@ -312,6 +325,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const blogs = await storage.getAllBlogs(onlyPublished);
       res.json(blogs);
     } catch (error) {
+      console.error("Error fetching blog posts:", error);
       res.status(500).json({ message: "Failed to fetch blog posts" });
     }
   });
@@ -321,13 +335,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const blogs = await storage.getFeaturedBlogs();
       res.json(blogs);
     } catch (error) {
+      console.error("Error fetching featured blog posts:", error);
       res.status(500).json({ message: "Failed to fetch featured blog posts" });
     }
   });
 
   app.get("/api/blogs/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const blog = await storage.getBlog(id);
       
       if (!blog) {
@@ -341,6 +356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(blog);
     } catch (error) {
+      console.error("Error fetching blog post:", error);
       res.status(500).json({ message: "Failed to fetch blog post" });
     }
   });
@@ -361,6 +377,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(blog);
     } catch (error) {
+      console.error("Error fetching blog post by slug:", error);
       res.status(500).json({ message: "Failed to fetch blog post" });
     }
   });
@@ -379,7 +396,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const blogData = {
         ...req.body,
         imageUrl: `/uploads/${file.filename}`,
-        authorId: req.user.id,
+        authorId: req.user._id,
         published: req.body.published === "true",
       };
       
@@ -388,6 +405,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const blog = await storage.createBlog(validatedData);
       res.status(201).json(blog);
     } catch (error) {
+      console.error("Error creating blog post:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -399,7 +417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const existingBlog = await storage.getBlog(id);
       
       if (!existingBlog) {
@@ -422,6 +440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedBlog = await storage.updateBlog(id, blogData);
       res.json(updatedBlog);
     } catch (error) {
+      console.error("Error updating blog post:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -433,7 +452,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const deleted = await storage.deleteBlog(id);
       
       if (!deleted) {
@@ -442,6 +461,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json({ message: "Blog post deleted successfully" });
     } catch (error) {
+      console.error("Error deleting blog post:", error);
       res.status(500).json({ message: "Failed to delete blog post" });
     }
   });
@@ -455,6 +475,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         : await storage.getAllVideos();
       res.json(videos);
     } catch (error) {
+      console.error("Error fetching videos:", error);
       res.status(500).json({ message: "Failed to fetch videos" });
     }
   });
@@ -482,6 +503,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const video = await storage.createVideo(validatedData);
       res.status(201).json(video);
     } catch (error) {
+      console.error("Error creating video:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -493,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const existingVideo = await storage.getVideo(id);
       
       if (!existingVideo) {
@@ -517,6 +539,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedVideo = await storage.updateVideo(id, videoData);
       res.json(updatedVideo);
     } catch (error) {
+      console.error("Error updating video:", error);
       if (error instanceof ZodError) {
         return handleZodError(error, res);
       }
@@ -528,7 +551,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const deleted = await storage.deleteVideo(id);
       
       if (!deleted) {
@@ -537,24 +560,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json({ message: "Video deleted successfully" });
     } catch (error) {
+      console.error("Error deleting video:", error);
       res.status(500).json({ message: "Failed to delete video" });
     }
   });
 
   // Contact endpoints
-  app.post("/api/contact", async (req, res) => {
-    try {
-      const validatedData = insertContactSchema.parse(req.body);
-      const contact = await storage.createContact(validatedData);
-      res.status(201).json({ message: "Message sent successfully" });
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return handleZodError(error, res);
-      }
-      res.status(500).json({ message: "Failed to send message" });
-    }
-  });
-
   app.get("/api/admin/contacts", async (req, res) => {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
@@ -565,6 +576,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         : await storage.getAllContacts();
       res.json(contacts);
     } catch (error) {
+      console.error("Error fetching contacts:", error);
       res.status(500).json({ message: "Failed to fetch contacts" });
     }
   });
@@ -573,7 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const contact = await storage.getContact(id);
       
       if (!contact) {
@@ -582,7 +594,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(contact);
     } catch (error) {
+      console.error("Error fetching contact:", error);
       res.status(500).json({ message: "Failed to fetch contact" });
+    }
+  });
+
+  app.post("/api/contacts", async (req, res) => {
+    try {
+      const validatedData = insertContactSchema.parse(req.body);
+      const contact = await storage.createContact(validatedData);
+      res.status(201).json(contact);
+    } catch (error) {
+      console.error("Error creating contact:", error);
+      if (error instanceof ZodError) {
+        return handleZodError(error, res);
+      }
+      res.status(500).json({ message: "Failed to submit contact form" });
     }
   });
 
@@ -590,7 +617,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const updatedContact = await storage.markContactAsRead(id);
       
       if (!updatedContact) {
@@ -599,6 +626,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updatedContact);
     } catch (error) {
+      console.error("Error marking contact as read:", error);
       res.status(500).json({ message: "Failed to mark contact as read" });
     }
   });
@@ -607,7 +635,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       if (!isAdmin(req)) return res.status(403).json({ message: "Forbidden" });
       
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const deleted = await storage.deleteContact(id);
       
       if (!deleted) {
@@ -616,10 +644,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json({ message: "Contact deleted successfully" });
     } catch (error) {
+      console.error("Error deleting contact:", error);
       res.status(500).json({ message: "Failed to delete contact" });
     }
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
+  // Start HTTP server to listen for requests
+  const server = createServer(app);
+  return server;
 }
