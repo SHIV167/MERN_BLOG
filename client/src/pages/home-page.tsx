@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { MapPin, Linkedin, GitPullRequest, Twitter, Youtube, Instagram, Mail, Phone, Globe, ExternalLink } from 'lucide-react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
+import { TypeAnimation } from 'react-type-animation';
+import { motion } from 'framer-motion';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { insertContactSchema } from '@shared/schema';
@@ -148,40 +150,125 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary to-purple-500 text-white min-h-[500px] flex items-center">
-        <div className="absolute right-0 top-0 h-full w-1/3 opacity-20"
-             style={{ backgroundImage: 'radial-gradient(#8054fe 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-        <div className="container mx-auto px-4 py-16 relative z-10">
+      {/* Hero Section with Animated Background */}
+      <section className="relative bg-gradient-to-r from-primary to-purple-500 text-white min-h-[600px] flex items-center overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute bg-white bg-opacity-20 rounded-full"
+              style={{
+                width: Math.random() * 100 + 10,
+                height: Math.random() * 100 + 10,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [Math.random() * 100, Math.random() * -100],
+                opacity: [0.1, 0.3, 0.1],
+              }}
+              transition={{
+                duration: Math.random() * 15 + 10,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Dot pattern overlay */}
+        <div className="absolute inset-0 opacity-30"
+             style={{ backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+             
+        <div className="container mx-auto px-4 py-20 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="w-full md:w-1/2 mb-10 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">MY Contact Is 9</h1>
-              <div className="bg-white bg-opacity-20 text-white inline-block px-3 py-1 rounded-full text-sm font-medium mb-6">
-                <FaMapMarkerAlt className="inline mr-2" /> New Delhi, India
+            <motion.div 
+              className="w-full md:w-1/2 mb-10 md:mb-0"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="bg-white/10 backdrop-blur-sm p-1.5 rounded-lg inline-block mb-2"
+              >
+                <span className="text-xs font-medium uppercase tracking-wider px-2">Welcome to my portfolio</span>
+              </motion.div>
+              
+              <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                Hi! I'm <span className="text-yellow-300">Shiv Jha</span>
+              </h1>
+              
+              <div className="text-2xl md:text-3xl font-light mb-6 h-16">
+                <TypeAnimation
+                  sequence={[
+                    'Full Stack Developer',
+                    2000,
+                    'MERN Specialist',
+                    2000,
+                    'UI/UX Designer',
+                    2000,
+                    'Backend Architect',
+                    2000,
+                  ]}
+                  wrapper="span"
+                  speed={50}
+                  repeat={Infinity}
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-green-200"
+                />
               </div>
-              <p className="text-lg mb-8 max-w-lg">
+              
+              <div className="bg-white/20 backdrop-blur-sm text-white inline-flex items-center px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <FaMapMarkerAlt className="mr-2" /> New Delhi, India
+              </div>
+              
+              <motion.p 
+                className="text-lg mb-8 max-w-lg"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+              >
                 Full-stack developer specialized in MERN stack with a passion for building beautiful, functional websites and applications.
-              </p>
-              <div className="flex space-x-4">
+              </motion.p>
+              
+              <motion.div 
+                className="flex flex-wrap gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+              >
                 <Link href="#contact">
-                  <Button className="bg-white text-primary hover:bg-gray-100">
+                  <Button className="bg-white text-primary hover:bg-gray-100 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
                     Get in Touch
                   </Button>
                 </Link>
                 <Link href="#projects">
-                  <Button variant="outline" className="border border-white text-white hover:bg-white hover:text-primary">
+                  <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-primary transition-all hover:-translate-y-1">
                     View Projects
                   </Button>
                 </Link>
+              </motion.div>
+            </motion.div>
+            
+            <motion.div 
+              className="w-full md:w-1/2 flex justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="relative">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg blur opacity-75 animate-pulse"></div>
+                <img 
+                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
+                  alt="Developer working" 
+                  className="relative rounded-lg shadow-2xl max-w-md w-full object-cover"
+                />
               </div>
-            </div>
-            <div className="w-full md:w-1/2 flex justify-center">
-              <img 
-                src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
-                alt="Developer working" 
-                className="rounded-lg shadow-2xl max-w-md w-full" 
-              />
-            </div>
+            </motion.div>
           </div>
         </div>
         <Wave />

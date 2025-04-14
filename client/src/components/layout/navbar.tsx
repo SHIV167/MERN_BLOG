@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { FaGithub, FaLinkedinIn, FaTwitter, FaInstagram } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
 
 export default function Navbar() {
@@ -87,6 +88,22 @@ export default function Navbar() {
         </div>
         
         <div className="flex items-center space-x-3">
+          {/* Social Media Icons - Hidden on mobile */}
+          <div className="hidden md:flex items-center space-x-2 mr-3">
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
+              <FaGithub className="h-4 w-4" />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
+              <FaLinkedinIn className="h-4 w-4" />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
+              <FaTwitter className="h-4 w-4" />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
+              <FaInstagram className="h-4 w-4" />
+            </a>
+          </div>
+
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
