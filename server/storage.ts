@@ -1,374 +1,292 @@
-import { 
-  users, 
-  projects, 
-  skills, 
-  blogs, 
-  videos, 
-  contacts, 
-  categories,
-  type User, 
-  type InsertUser, 
-  type Project, 
-  type InsertProject, 
-  type Skill, 
-  type InsertSkill, 
-  type Blog, 
-  type InsertBlog, 
-  type Video, 
-  type InsertVideo, 
-  type Contact, 
-  type InsertContact,
-  type Category,
-  type InsertCategory
+import {
+  User,
+  InsertUser,
+  Project,
+  InsertProject,
+  Skill,
+  InsertSkill,
+  Category,
+  InsertCategory,
+  Blog,
+  InsertBlog,
+  Video,
+  InsertVideo,
+  Contact,
+  InsertContact,
+  UserModel,
+  ProjectModel,
+  SkillModel,
+  CategoryModel,
+  BlogModel,
+  VideoModel,
+  ContactModel
 } from "@shared/schema";
-import { db, pool } from "./db";
-import { eq, desc, and, sql } from "drizzle-orm";
+import { Types } from 'mongoose';
 import session from "express-session";
-import connectPg from "connect-pg-simple";
-
-const PostgresSessionStore = connectPg(session);
+import MongoStore from "connect-mongo";
+import db from "./db";
 
 // Define interface for storage operations
 export interface IStorage {
   // User operations
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
+  getUser(id: string): Promise<User | null>;
+  getUserByUsername(username: string): Promise<User | null>;
   createUser(user: InsertUser): Promise<User>;
   
   // Project operations
   getAllProjects(): Promise<Project[]>;
   getFeaturedProjects(): Promise<Project[]>;
-  getProject(id: number): Promise<Project | undefined>;
+  getProject(id: string): Promise<Project | null>;
   createProject(project: InsertProject): Promise<Project>;
-  updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined>;
-  deleteProject(id: number): Promise<boolean>;
+  updateProject(id: string, project: Partial<InsertProject>): Promise<Project | null>;
+  deleteProject(id: string): Promise<boolean>;
   
   // Skill operations
   getAllSkills(): Promise<Skill[]>;
   getSkillsByCategory(category: string): Promise<Skill[]>;
-  getSkill(id: number): Promise<Skill | undefined>;
+  getSkill(id: string): Promise<Skill | null>;
   createSkill(skill: InsertSkill): Promise<Skill>;
-  updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill | undefined>;
-  deleteSkill(id: number): Promise<boolean>;
+  updateSkill(id: string, skill: Partial<InsertSkill>): Promise<Skill | null>;
+  deleteSkill(id: string): Promise<boolean>;
   
   // Category operations
   getAllCategories(): Promise<Category[]>;
-  getCategory(id: number): Promise<Category | undefined>;
-  getCategoryBySlug(slug: string): Promise<Category | undefined>;
+  getCategory(id: string): Promise<Category | null>;
+  getCategoryBySlug(slug: string): Promise<Category | null>;
   createCategory(category: InsertCategory): Promise<Category>;
-  updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined>;
-  deleteCategory(id: number): Promise<boolean>;
+  updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | null>;
+  deleteCategory(id: string): Promise<boolean>;
   
   // Blog operations
   getAllBlogs(published?: boolean): Promise<Blog[]>;
   getFeaturedBlogs(): Promise<Blog[]>;
-  getBlog(id: number): Promise<Blog | undefined>;
-  getBlogBySlug(slug: string): Promise<Blog | undefined>;
+  getBlog(id: string): Promise<Blog | null>;
+  getBlogBySlug(slug: string): Promise<Blog | null>;
   createBlog(blog: InsertBlog): Promise<Blog>;
-  updateBlog(id: number, blog: Partial<InsertBlog>): Promise<Blog | undefined>;
-  deleteBlog(id: number): Promise<boolean>;
+  updateBlog(id: string, blog: Partial<InsertBlog>): Promise<Blog | null>;
+  deleteBlog(id: string): Promise<boolean>;
   
   // Video operations
   getAllVideos(): Promise<Video[]>;
   getFeaturedVideos(): Promise<Video[]>;
-  getVideo(id: number): Promise<Video | undefined>;
+  getVideo(id: string): Promise<Video | null>;
   createVideo(video: InsertVideo): Promise<Video>;
-  updateVideo(id: number, video: Partial<InsertVideo>): Promise<Video | undefined>;
-  deleteVideo(id: number): Promise<boolean>;
+  updateVideo(id: string, video: Partial<InsertVideo>): Promise<Video | null>;
+  deleteVideo(id: string): Promise<boolean>;
   
   // Contact operations
   getAllContacts(): Promise<Contact[]>;
   getUnreadContacts(): Promise<Contact[]>;
-  getContact(id: number): Promise<Contact | undefined>;
+  getContact(id: string): Promise<Contact | null>;
   createContact(contact: InsertContact): Promise<Contact>;
-  markContactAsRead(id: number): Promise<Contact | undefined>;
-  deleteContact(id: number): Promise<boolean>;
+  markContactAsRead(id: string): Promise<Contact | null>;
+  deleteContact(id: string): Promise<boolean>;
   
   // For auth sessions
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 }
 
-// Database storage implementation
-export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+// MongoDB storage implementation
+export class MongoDBStorage implements IStorage {
+  sessionStore: session.Store;
   
   constructor() {
-    this.sessionStore = new PostgresSessionStore({ 
-      pool, 
-      createTableIfMissing: true 
+    // Use MongoDB for session storage
+    this.sessionStore = MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio',
+      collectionName: 'sessions'
     });
   }
 
   // User operations
-  async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+  async getUser(id: string): Promise<User | null> {
+    return UserModel.findById(id);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user;
+  async getUserByUsername(username: string): Promise<User | null> {
+    return UserModel.findOne({ username });
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(insertUser)
-      .returning();
-    return user;
+    const user = new UserModel(insertUser);
+    return user.save();
   }
 
   // Project operations
   async getAllProjects(): Promise<Project[]> {
-    return await db.select().from(projects).orderBy(desc(projects.createdAt));
+    return ProjectModel.find().sort({ createdAt: -1 });
   }
 
   async getFeaturedProjects(): Promise<Project[]> {
-    return await db.select().from(projects).where(eq(projects.featured, true)).orderBy(desc(projects.createdAt));
+    return ProjectModel.find({ featured: true }).sort({ createdAt: -1 });
   }
 
-  async getProject(id: number): Promise<Project | undefined> {
-    const [project] = await db.select().from(projects).where(eq(projects.id, id));
-    return project;
+  async getProject(id: string): Promise<Project | null> {
+    return ProjectModel.findById(id);
   }
 
   async createProject(project: InsertProject): Promise<Project> {
-    const [newProject] = await db.insert(projects).values(project).returning();
-    return newProject;
+    const newProject = new ProjectModel(project);
+    return newProject.save();
   }
 
-  async updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined> {
-    const [updatedProject] = await db
-      .update(projects)
-      .set(project)
-      .where(eq(projects.id, id))
-      .returning();
-    return updatedProject;
+  async updateProject(id: string, project: Partial<InsertProject>): Promise<Project | null> {
+    return ProjectModel.findByIdAndUpdate(id, project, { new: true });
   }
 
-  async deleteProject(id: number): Promise<boolean> {
-    const [deletedProject] = await db
-      .delete(projects)
-      .where(eq(projects.id, id))
-      .returning();
-    return !!deletedProject;
+  async deleteProject(id: string): Promise<boolean> {
+    const result = await ProjectModel.findByIdAndDelete(id);
+    return !!result;
   }
 
   // Skill operations
   async getAllSkills(): Promise<Skill[]> {
-    return await db.select().from(skills).orderBy(skills.order);
+    return SkillModel.find().sort({ order: 1 });
   }
 
   async getSkillsByCategory(category: string): Promise<Skill[]> {
-    return await db
-      .select()
-      .from(skills)
-      .where(eq(skills.category, category))
-      .orderBy(skills.order);
+    return SkillModel.find({ category }).sort({ order: 1 });
   }
 
-  async getSkill(id: number): Promise<Skill | undefined> {
-    const [skill] = await db.select().from(skills).where(eq(skills.id, id));
-    return skill;
+  async getSkill(id: string): Promise<Skill | null> {
+    return SkillModel.findById(id);
   }
 
   async createSkill(skill: InsertSkill): Promise<Skill> {
-    const [newSkill] = await db.insert(skills).values(skill).returning();
-    return newSkill;
+    const newSkill = new SkillModel(skill);
+    return newSkill.save();
   }
 
-  async updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill | undefined> {
-    const [updatedSkill] = await db
-      .update(skills)
-      .set(skill)
-      .where(eq(skills.id, id))
-      .returning();
-    return updatedSkill;
+  async updateSkill(id: string, skill: Partial<InsertSkill>): Promise<Skill | null> {
+    return SkillModel.findByIdAndUpdate(id, skill, { new: true });
   }
 
-  async deleteSkill(id: number): Promise<boolean> {
-    const [deletedSkill] = await db
-      .delete(skills)
-      .where(eq(skills.id, id))
-      .returning();
-    return !!deletedSkill;
+  async deleteSkill(id: string): Promise<boolean> {
+    const result = await SkillModel.findByIdAndDelete(id);
+    return !!result;
   }
 
   // Category operations
   async getAllCategories(): Promise<Category[]> {
-    return await db.select().from(categories).orderBy(categories.name);
+    return CategoryModel.find().sort({ name: 1 });
   }
 
-  async getCategory(id: number): Promise<Category | undefined> {
-    const [category] = await db.select().from(categories).where(eq(categories.id, id));
-    return category;
+  async getCategory(id: string): Promise<Category | null> {
+    return CategoryModel.findById(id);
   }
 
-  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
-    const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
-    return category;
+  async getCategoryBySlug(slug: string): Promise<Category | null> {
+    return CategoryModel.findOne({ slug });
   }
 
   async createCategory(category: InsertCategory): Promise<Category> {
-    const [newCategory] = await db.insert(categories).values(category).returning();
-    return newCategory;
+    const newCategory = new CategoryModel(category);
+    return newCategory.save();
   }
 
-  async updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined> {
-    const [updatedCategory] = await db
-      .update(categories)
-      .set(category)
-      .where(eq(categories.id, id))
-      .returning();
-    return updatedCategory;
+  async updateCategory(id: string, category: Partial<InsertCategory>): Promise<Category | null> {
+    return CategoryModel.findByIdAndUpdate(id, category, { new: true });
   }
 
-  async deleteCategory(id: number): Promise<boolean> {
-    const [deletedCategory] = await db
-      .delete(categories)
-      .where(eq(categories.id, id))
-      .returning();
-    return !!deletedCategory;
+  async deleteCategory(id: string): Promise<boolean> {
+    const result = await CategoryModel.findByIdAndDelete(id);
+    return !!result;
   }
 
   // Blog operations
   async getAllBlogs(published?: boolean): Promise<Blog[]> {
-    if (published !== undefined) {
-      return await db
-        .select()
-        .from(blogs)
-        .where(eq(blogs.published, published))
-        .orderBy(desc(blogs.createdAt));
-    }
-    return await db.select().from(blogs).orderBy(desc(blogs.createdAt));
+    const query = published !== undefined ? { published } : {};
+    return BlogModel.find(query).sort({ createdAt: -1 });
   }
 
   async getFeaturedBlogs(): Promise<Blog[]> {
-    return await db
-      .select()
-      .from(blogs)
-      .where(eq(blogs.published, true))
-      .orderBy(desc(blogs.createdAt))
-      .limit(3);
+    return BlogModel.find({ published: true }).sort({ createdAt: -1 }).limit(3);
   }
 
-  async getBlog(id: number): Promise<Blog | undefined> {
-    const [blog] = await db.select().from(blogs).where(eq(blogs.id, id));
-    return blog;
+  async getBlog(id: string): Promise<Blog | null> {
+    return BlogModel.findById(id);
   }
 
-  async getBlogBySlug(slug: string): Promise<Blog | undefined> {
-    const [blog] = await db.select().from(blogs).where(eq(blogs.slug, slug));
-    return blog;
+  async getBlogBySlug(slug: string): Promise<Blog | null> {
+    return BlogModel.findOne({ slug });
   }
 
   async createBlog(blog: InsertBlog): Promise<Blog> {
-    const [newBlog] = await db.insert(blogs).values({
+    const blogWithDates = {
       ...blog,
       updatedAt: new Date()
-    }).returning();
-    return newBlog;
+    };
+    const newBlog = new BlogModel(blogWithDates);
+    return newBlog.save();
   }
 
-  async updateBlog(id: number, blog: Partial<InsertBlog>): Promise<Blog | undefined> {
-    const [updatedBlog] = await db
-      .update(blogs)
-      .set({
-        ...blog,
-        updatedAt: new Date()
-      })
-      .where(eq(blogs.id, id))
-      .returning();
-    return updatedBlog;
+  async updateBlog(id: string, blog: Partial<InsertBlog>): Promise<Blog | null> {
+    const blogWithUpdatedDate = {
+      ...blog,
+      updatedAt: new Date()
+    };
+    return BlogModel.findByIdAndUpdate(id, blogWithUpdatedDate, { new: true });
   }
 
-  async deleteBlog(id: number): Promise<boolean> {
-    const [deletedBlog] = await db
-      .delete(blogs)
-      .where(eq(blogs.id, id))
-      .returning();
-    return !!deletedBlog;
+  async deleteBlog(id: string): Promise<boolean> {
+    const result = await BlogModel.findByIdAndDelete(id);
+    return !!result;
   }
 
   // Video operations
   async getAllVideos(): Promise<Video[]> {
-    return await db.select().from(videos).orderBy(videos.order);
+    return VideoModel.find().sort({ order: 1 });
   }
 
   async getFeaturedVideos(): Promise<Video[]> {
-    return await db
-      .select()
-      .from(videos)
-      .where(eq(videos.featured, true))
-      .orderBy(videos.order);
+    return VideoModel.find({ featured: true }).sort({ order: 1 });
   }
 
-  async getVideo(id: number): Promise<Video | undefined> {
-    const [video] = await db.select().from(videos).where(eq(videos.id, id));
-    return video;
+  async getVideo(id: string): Promise<Video | null> {
+    return VideoModel.findById(id);
   }
 
   async createVideo(video: InsertVideo): Promise<Video> {
-    const [newVideo] = await db.insert(videos).values(video).returning();
-    return newVideo;
+    const newVideo = new VideoModel(video);
+    return newVideo.save();
   }
 
-  async updateVideo(id: number, video: Partial<InsertVideo>): Promise<Video | undefined> {
-    const [updatedVideo] = await db
-      .update(videos)
-      .set(video)
-      .where(eq(videos.id, id))
-      .returning();
-    return updatedVideo;
+  async updateVideo(id: string, video: Partial<InsertVideo>): Promise<Video | null> {
+    return VideoModel.findByIdAndUpdate(id, video, { new: true });
   }
 
-  async deleteVideo(id: number): Promise<boolean> {
-    const [deletedVideo] = await db
-      .delete(videos)
-      .where(eq(videos.id, id))
-      .returning();
-    return !!deletedVideo;
+  async deleteVideo(id: string): Promise<boolean> {
+    const result = await VideoModel.findByIdAndDelete(id);
+    return !!result;
   }
 
   // Contact operations
   async getAllContacts(): Promise<Contact[]> {
-    return await db.select().from(contacts).orderBy(desc(contacts.createdAt));
+    return ContactModel.find().sort({ createdAt: -1 });
   }
 
   async getUnreadContacts(): Promise<Contact[]> {
-    return await db
-      .select()
-      .from(contacts)
-      .where(eq(contacts.read, false))
-      .orderBy(desc(contacts.createdAt));
+    return ContactModel.find({ read: false }).sort({ createdAt: -1 });
   }
 
-  async getContact(id: number): Promise<Contact | undefined> {
-    const [contact] = await db.select().from(contacts).where(eq(contacts.id, id));
-    return contact;
+  async getContact(id: string): Promise<Contact | null> {
+    return ContactModel.findById(id);
   }
 
   async createContact(contact: InsertContact): Promise<Contact> {
-    const [newContact] = await db.insert(contacts).values(contact).returning();
-    return newContact;
+    const newContact = new ContactModel(contact);
+    return newContact.save();
   }
 
-  async markContactAsRead(id: number): Promise<Contact | undefined> {
-    const [updatedContact] = await db
-      .update(contacts)
-      .set({ read: true })
-      .where(eq(contacts.id, id))
-      .returning();
-    return updatedContact;
+  async markContactAsRead(id: string): Promise<Contact | null> {
+    return ContactModel.findByIdAndUpdate(id, { read: true }, { new: true });
   }
 
-  async deleteContact(id: number): Promise<boolean> {
-    const [deletedContact] = await db
-      .delete(contacts)
-      .where(eq(contacts.id, id))
-      .returning();
-    return !!deletedContact;
+  async deleteContact(id: string): Promise<boolean> {
+    const result = await ContactModel.findByIdAndDelete(id);
+    return !!result;
   }
 }
 
-export const storage = new DatabaseStorage();
+// Create and export a storage instance
+export const storage = new MongoDBStorage();

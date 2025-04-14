@@ -63,8 +63,9 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
-  passport.deserializeUser(async (id: number, done) => {
+  // Use MongoDB ObjectId as string for serialization
+  passport.serializeUser((user, done) => done(null, user._id.toString()));
+  passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
       done(null, user);
@@ -94,8 +95,10 @@ export function setupAuth(app: Express) {
       // Auto login after registration
       req.login(user, (err) => {
         if (err) return next(err);
-        // Return user without password
-        const { password, ...userWithoutPassword } = user;
+        // Convert Mongoose model to plain object
+        const userObj = user.toObject();
+        // Remove password for security
+        const { password, ...userWithoutPassword } = userObj;
         res.status(201).json(userWithoutPassword);
       });
     } catch (error) {
@@ -115,8 +118,10 @@ export function setupAuth(app: Express) {
       
       req.login(user, (err) => {
         if (err) return next(err);
-        // Return user without password
-        const { password, ...userWithoutPassword } = user;
+        // Convert Mongoose model to plain object
+        const userObj = user.toObject();
+        // Remove password for security
+        const { password, ...userWithoutPassword } = userObj;
         res.status(200).json(userWithoutPassword);
       });
     })(req, res, next);
@@ -131,8 +136,10 @@ export function setupAuth(app: Express) {
 
   app.get("/api/user", (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    // Return user without password
-    const { password, ...userWithoutPassword } = req.user;
+    // Convert Mongoose model to plain object
+    const userObj = req.user.toObject ? req.user.toObject() : req.user;
+    // Remove password for security
+    const { password, ...userWithoutPassword } = userObj;
     res.json(userWithoutPassword);
   });
   
