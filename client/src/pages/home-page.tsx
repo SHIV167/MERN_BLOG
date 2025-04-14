@@ -177,11 +177,11 @@ export default function HomePage() {
             />
           ))}
         </div>
-        
+
         {/* Dot pattern overlay */}
         <div className="absolute inset-0 opacity-30"
              style={{ backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-             
+
         <div className="container mx-auto px-4 py-20 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <motion.div 
@@ -198,11 +198,11 @@ export default function HomePage() {
               >
                 <span className="text-xs font-medium uppercase tracking-wider px-2">Welcome to my portfolio</span>
               </motion.div>
-              
+
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
                 Hi! I'm <span className="text-yellow-300">Shiv Jha</span>
               </h1>
-              
+
               <div className="text-2xl md:text-3xl font-light mb-6 h-16">
                 <TypeAnimation
                   sequence={[
@@ -221,11 +221,11 @@ export default function HomePage() {
                   className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-green-200"
                 />
               </div>
-              
+
               <div className="bg-white/20 backdrop-blur-sm text-white inline-flex items-center px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <FaMapMarkerAlt className="mr-2" /> New Delhi, India
               </div>
-              
+
               <motion.p 
                 className="text-lg mb-8 max-w-lg"
                 initial={{ opacity: 0 }}
@@ -234,7 +234,7 @@ export default function HomePage() {
               >
                 Full-stack developer specialized in MERN stack with a passion for building beautiful, functional websites and applications.
               </motion.p>
-              
+
               <motion.div 
                 className="flex flex-wrap gap-4"
                 initial={{ opacity: 0, y: 20 }}
@@ -253,7 +253,7 @@ export default function HomePage() {
                 </Link>
               </motion.div>
             </motion.div>
-            
+
             <motion.div 
               className="w-full md:w-1/2 flex justify-center"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -665,7 +665,7 @@ export default function HomePage() {
             <div>
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-xl font-bold mb-6">Send Me a Message</h3>
-                
+
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <div>
                     <label htmlFor="name" className="block text-gray-700 text-sm font-medium mb-2">Your Name</label>
@@ -680,7 +680,7 @@ export default function HomePage() {
                       <p className="mt-1 text-sm text-red-600">{form.formState.errors.name.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">Your Email</label>
                     <input
@@ -694,11 +694,11 @@ export default function HomePage() {
                       <p className="mt-1 text-sm text-red-600">{form.formState.errors.email.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label htmlFor="subject" className="block text-gray-700 text-sm font-medium mb-2">Subject</label>
                     <input
-                      {...form.register('subject')}
+                      {......form.register('subject')}
                       type="text"
                       id="subject"
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -708,7 +708,7 @@ export default function HomePage() {
                       <p className="mt-1 text-sm text-red-600">{form.formState.errors.subject.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label htmlFor="message" className="block text-gray-700 text-sm font-medium mb-2">Message</label>
                     <textarea
@@ -722,7 +722,7 @@ export default function HomePage() {
                       <p className="mt-1 text-sm text-red-600">{form.formState.errors.message.message}</p>
                     )}
                   </div>
-                  
+
                   <Button 
                     type="submit" 
                     className="w-full"
@@ -733,11 +733,11 @@ export default function HomePage() {
                 </form>
               </div>
             </div>
-            
+
             <div>
               <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h3 className="text-xl font-bold mb-6">Contact Information</h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-start">
                     <div className="bg-primary bg-opacity-10 rounded-full p-3 mr-4">
@@ -748,7 +748,7 @@ export default function HomePage() {
                       <p className="text-gray-600 mt-1">New Delhi, India</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="bg-primary bg-opacity-10 rounded-full p-3 mr-4">
                       <Mail className="text-primary" />
@@ -758,7 +758,7 @@ export default function HomePage() {
                       <p className="text-gray-600 mt-1">contact@shivjha.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="bg-primary bg-opacity-10 rounded-full p-3 mr-4">
                       <Phone className="text-primary" />
@@ -770,10 +770,10 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-xl font-bold mb-6">Follow Me</h3>
-                
+
                 <div className="flex justify-around">
                   <a href="#" className="bg-primary bg-opacity-10 hover:bg-opacity-20 text-primary h-12 w-12 rounded-full flex items-center justify-center transition duration-200">
                     <Linkedin />
@@ -803,7 +803,7 @@ export default function HomePage() {
 // Helper function to format dates
 function formatDate(dateString: string | undefined | null) {
   if (!dateString) return 'Recent';
-  
+
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   return date.toLocaleDateString('en-US', options);
