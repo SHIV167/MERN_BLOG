@@ -17,6 +17,7 @@ import AdminVideos from "@/pages/admin/videos";
 import AdminEditor from "@/pages/admin/editor";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
+import { AuthProvider } from "@/hooks/use-auth";
 
 // Layout component for public pages
 function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -91,7 +92,12 @@ function Router() {
 }
 
 function App() {
-  return <Router />;
+  return (
+    <AuthProvider>
+      <Router />
+      <Toaster />
+    </AuthProvider>
+  );
 }
 
 export default App;
