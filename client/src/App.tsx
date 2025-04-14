@@ -45,20 +45,8 @@ function Router() {
         )}
       </Route>
       <Route path="/auth" component={AuthPage} />
-      <Route path="/blog">
-        {() => (
-          <PublicLayout>
-            <BlogIndex />
-          </PublicLayout>
-        )}
-      </Route>
-      <Route path="/blog/:slug">
-        {(params) => (
-          <PublicLayout>
-            <BlogPost />
-          </PublicLayout>
-        )}
-      </Route>
+      <Route path="/blog" component={BlogIndex} />
+      <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/projects">
         {() => (
           <PublicLayout>
