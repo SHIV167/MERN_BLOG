@@ -310,115 +310,146 @@ export default function HomePage() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-2">Skills & Expertise</h2>
-            <div className="h-1 w-20 bg-primary mx-auto mb-6"></div>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              I've developed a diverse set of skills across the full web development stack, specializing in MERN technologies.
+      <section id="skills" className="py-24 relative bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 opacity-30" 
+               style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }}
+          ></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="flex justify-center mb-6">
+              <div className="w-32 h-32 relative">
+                <div className="absolute inset-0 bg-primary/30 rounded-full blur-2xl animate-pulse"></div>
+                <Lottie 
+                  animationData={skillsAnimation}
+                  loop={true}
+                  autoplay={true}
+                  className="relative z-10"
+                />
+              </div>
+            </div>
+            <h2 className="text-5xl font-bold mb-4 text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
+              Skills & Expertise
+            </h2>
+            <p className="text-gray-300 max-w-2xl mx-auto text-lg">
+              Mastering the full stack development spectrum with expertise in modern web technologies.
             </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="group"
+            >
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-2xl relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-6 px-8">
+                  <h3 className="text-xl font-bold tracking-wider">FRONTEND SKILLS</h3>
+                </div>
+                <div className="p-8">
+                  {isFrontendSkillsLoading ? (
+                    <div className="space-y-6 py-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="space-y-2">
+                          <div className="flex justify-between">
+                            <div className="h-4 bg-gray-200 rounded w-24"></div>
+                            <div className="h-4 bg-gray-200 rounded w-12"></div>
+                          </div>
+                          <div className="h-2.5 bg-gray-200 rounded-full w-full"></div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    frontendSkills?.map((skill: { id: string; name: string; percentage: number }) => (
+                      <SkillProgress
+                        key={skill.id}
+                        name={skill.name}
+                        percentage={skill.percentage}
+                        colorClass="bg-gradient-to-r from-purple-500 to-pink-500"
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="group"
+            >
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-2xl relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-6 px-8">
+                  <h3 className="text-xl font-bold tracking-wider">BACKEND SKILLS</h3>
+                </div>
+                <div className="p-8">
+                  {isBackendSkillsLoading ? (
+                    <div className="space-y-6 py-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="space-y-2">
+                          <div className="flex justify-between">
+                            <div className="h-4 bg-gray-200 rounded w-24"></div>
+                            <div className="h-4 bg-gray-200 rounded w-12"></div>
+                          </div>
+                          <div className="h-2.5 bg-gray-200 rounded-full w-full"></div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    backendSkills?.map((skill: { id: string; name: string; percentage: number }) => (
+                      <SkillProgress
+                        key={skill.id}
+                        name={skill.name}
+                        percentage={skill.percentage}
+                        colorClass="bg-gradient-to-r from-blue-500 to-cyan-500"
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
+            </motion.div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="bg-secondary text-white py-3 px-4 font-bold">
-                <h3 className="text-lg">FRONTEND SKILLS</h3>
-              </div>
-              <div className="p-4">
-                {isFrontendSkillsLoading ? (
-                  <div className="space-y-6 py-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div key={i} className="space-y-2">
-                        <div className="flex justify-between">
-                          <div className="h-4 bg-gray-200 rounded w-24"></div>
-                          <div className="h-4 bg-gray-200 rounded w-12"></div>
-                        </div>
-                        <div className="h-2.5 bg-gray-200 rounded-full w-full"></div>
-                      </div>
-                    ))}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { title: 'FRAMEWORKS', icon: '⚛️' },
+              { title: 'DATABASES', icon: '🗄️' },
+              { title: 'TOOLS', icon: '🛠️' },
+              { title: 'CLOUD & DEV', icon: '☁️' }
+            ].map((category, index) => (
+              <motion.div
+                key={category.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                className="group"
+              >
+                <div className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 p-6 text-center transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-2xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="text-3xl mb-4 block">{category.icon}</span>
+                  <h4 className="text-lg font-semibold mb-4 text-white">{category.title}</h4>
+                  <div className="space-y-2 text-sm text-gray-300 relative z-10">
+                    {/* Keep existing content for each category */}
                   </div>
-                ) : (
-                  frontendSkills?.map((skill) => (
-                    <SkillProgress
-                      key={skill.id}
-                      name={skill.name}
-                      percentage={skill.percentage}
-                      colorClass="bg-secondary"
-                    />
-                  ))
-                )}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="bg-primary text-white py-3 px-4 font-bold">
-                <h3 className="text-lg">BACKEND SKILLS</h3>
-              </div>
-              <div className="p-4">
-                {isBackendSkillsLoading ? (
-                  <div className="space-y-6 py-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div key={i} className="space-y-2">
-                        <div className="flex justify-between">
-                          <div className="h-4 bg-gray-200 rounded w-24"></div>
-                          <div className="h-4 bg-gray-200 rounded w-12"></div>
-                        </div>
-                        <div className="h-2.5 bg-gray-200 rounded-full w-full"></div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  backendSkills?.map((skill) => (
-                    <SkillProgress
-                      key={skill.id}
-                      name={skill.name}
-                      percentage={skill.percentage}
-                      colorClass="bg-primary"
-                    />
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <div className="bg-white rounded-lg shadow-md p-4 text-center">
-              <h4 className="text-lg font-semibold mb-2">FRAMEWORKS</h4>
-              <div className="space-y-1 text-sm">
-                <p>React Native</p>
-                <p>Next.js</p>
-                <p>Bootstrap</p>
-                <p>Material UI</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-md p-4 text-center">
-              <h4 className="text-lg font-semibold mb-2">DATABASES</h4>
-              <div className="space-y-1 text-sm">
-                <p>MongoDB</p>
-                <p>MySQL</p>
-                <p>Firebase</p>
-                <p>Redis</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-md p-4 text-center">
-              <h4 className="text-lg font-semibold mb-2">TOOLS</h4>
-              <div className="space-y-1 text-sm">
-                <p>Git & GitPullRequest</p>
-                <p>VS Code</p>
-                <p>Docker</p>
-                <p>Webpack</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-md p-4 text-center">
-              <h4 className="text-lg font-semibold mb-2">CLOUD & DEV</h4>
-              <div className="space-y-1 text-sm">
-                <p>AWS</p>
-                <p>Heroku</p>
-                <p>Netlify</p>
-                <p>Vercel</p>
-              </div>
-            </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
