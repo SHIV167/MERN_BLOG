@@ -91,16 +91,16 @@ export default function Navbar() {
           {/* Social Media Icons - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-2 mr-3">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
-              <FaGithub className="h-4 w-4" />
+              <FaGithub className="h-8 w-8" />
             </a>
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
-              <FaLinkedinIn className="h-4 w-4" />
+              <FaLinkedinIn className="h-8 w-8" />
             </a>
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
-              <FaTwitter className="h-4 w-4" />
+              <FaTwitter className="h-8 w-8" />
             </a>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-gray-100">
-              <FaInstagram className="h-4 w-4" />
+              <FaInstagram className="h-8 w-8" />
             </a>
           </div>
 
@@ -132,8 +132,8 @@ export default function Navbar() {
           ) : (
             <Link href="/auth">
               <Button size="sm" className="bg-primary hover:bg-primary-dark">
-                <span className="hidden md:inline">My Resume</span>
-                <span className="md:hidden">Resume</span>
+                <span className="hidden md:inline">Click SignIn</span>
+                <span className="md:hidden">Click SignIn</span>
               </Button>
             </Link>
           )}
